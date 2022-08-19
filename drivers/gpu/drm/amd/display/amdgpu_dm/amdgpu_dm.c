@@ -5728,8 +5728,17 @@ static void update_stream_scaling_settings(const struct drm_display_mode *mode,
 	dst.height = stream->timing.v_addressable;
 
 	if (dm_state) {
+		bool interlaced;
+
 		rmx_type = dm_state->scaling;
+		interlaced = mode->flags & DRM_MODE_FLAG_INTERLACE;
+
 		if (rmx_type == RMX_ASPECT || rmx_type == RMX_OFF) {
+			/* Convert dst to square pixels while correcting its aspect ratio. */
+			if (interlaced) {
+				dst.height *= 2;
+			}
+
 			if (src.width * dst.height <
 					src.height * dst.width) {
 				/* height needs less upscaling/more downscaling */
@@ -5740,8 +5749,16 @@ static void update_stream_scaling_settings(const struct drm_display_mode *mode,
 				dst.height = src.height *
 						dst.width / src.width;
 			}
+
+			/* If height was modified, it may be odd now. Oh well, just divide anyway. */
+			if (interlaced) {
+				dst.height /= 2;
+			}
 		} else if (rmx_type == RMX_CENTER) {
 			dst = src;
+			if (interlaced) {
+				dst.height /= 2;
+			}
 		}
 
 		dst.x = (stream->timing.h_addressable - dst.width) / 2;
