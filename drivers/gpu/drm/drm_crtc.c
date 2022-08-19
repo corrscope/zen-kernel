@@ -816,8 +816,9 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
 	set.fb = fb;
 
 	if (drm_drv_uses_atomic_modeset(dev)) {
-		pr_warn("asdf drm_mode_setcrtc: crtc->funcs->set_config() = %pF()\n", crtc->funcs->set_config);
+		pr_warn("asdf drm_mode_setcrtc: { crtc->funcs->set_config()\n");
 		ret = crtc->funcs->set_config(&set, &ctx);
+		pr_warn("asdf drm_mode_setcrtc: } crtc->funcs->set_config() = %d\n", ret);
 	} else {
 		pr_warn("asdf: __drm_mode_set_config_internal()\n");
 		ret = __drm_mode_set_config_internal(&set, &ctx);
