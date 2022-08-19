@@ -1566,6 +1566,7 @@ static int update_output_state(struct drm_atomic_state *state,
 int __drm_atomic_helper_set_config(struct drm_mode_set *set,
 				   struct drm_atomic_state *state)
 {
+	pr_warn("asdf: __drm_atomic_helper_set_config\n");
 	struct drm_crtc_state *crtc_state;
 	struct drm_plane_state *primary_state;
 	struct drm_crtc *crtc = set->crtc;
@@ -1573,24 +1574,29 @@ int __drm_atomic_helper_set_config(struct drm_mode_set *set,
 	int ret;
 
 	crtc_state = drm_atomic_get_crtc_state(state, crtc);
+	pr_warn("asdf: drm_atomic_get_crtc_state() = %p\n", crtc_state);
 	if (IS_ERR(crtc_state))
 		return PTR_ERR(crtc_state);
 
 	primary_state = drm_atomic_get_plane_state(state, crtc->primary);
+	pr_warn("asdf: drm_atomic_get_plane_state() = %p\n", primary_state);
 	if (IS_ERR(primary_state))
 		return PTR_ERR(primary_state);
 
 	if (!set->mode) {
+		pr_warn("asdf: !set->mode\n");
 		WARN_ON(set->fb);
 		WARN_ON(set->num_connectors);
 
 		ret = drm_atomic_set_mode_for_crtc(crtc_state, NULL);
+		pr_warn("asdf: drm_atomic_set_mode_for_crtc() = %d\n", ret);
 		if (ret != 0)
 			return ret;
 
 		crtc_state->active = false;
 
 		ret = drm_atomic_set_crtc_for_plane(primary_state, NULL);
+		pr_warn("asdf: drm_atomic_set_crtc_for_plane() = %d\n", ret);
 		if (ret != 0)
 			return ret;
 
@@ -1603,12 +1609,14 @@ int __drm_atomic_helper_set_config(struct drm_mode_set *set,
 	WARN_ON(!set->num_connectors);
 
 	ret = drm_atomic_set_mode_for_crtc(crtc_state, set->mode);
+	pr_warn("asdf: drm_atomic_set_mode_for_crtc() = %d\n", ret);
 	if (ret != 0)
 		return ret;
 
 	crtc_state->active = true;
 
 	ret = drm_atomic_set_crtc_for_plane(primary_state, crtc);
+	pr_warn("asdf: drm_atomic_set_crtc_for_plane() = %d\n", ret);
 	if (ret != 0)
 		return ret;
 
@@ -1631,6 +1639,7 @@ int __drm_atomic_helper_set_config(struct drm_mode_set *set,
 
 commit:
 	ret = update_output_state(state, set);
+	pr_warn("asdf: update_output_state() = %d\n", ret);
 	if (ret)
 		return ret;
 
