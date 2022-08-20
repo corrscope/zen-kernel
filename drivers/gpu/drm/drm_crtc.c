@@ -647,7 +647,7 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
 	int ret;
 	int i;
 
-	pr_warn("asdf: drm_mode_setcrtc\n");
+	pr_warn("asdf: { drm_mode_setcrtc\n");
 
 	if (!drm_core_check_feature(dev, DRIVER_MODESET))
 		return -EOPNOTSUPP;
@@ -784,6 +784,7 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
 			goto out;
 		}
 
+		pr_warn("asdf: drm_mode_setcrtc processing %d connectors\n", crtc_req->count_connectors);
 		for (i = 0; i < crtc_req->count_connectors; i++) {
 			connector_set[i] = NULL;
 			set_connectors_ptr = (uint32_t __user *)(unsigned long)crtc_req->set_connectors_ptr;
@@ -799,7 +800,7 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
 				ret = -ENOENT;
 				goto out;
 			}
-			pr_warn("asdf: [CONNECTOR:%d:%s]\n",
+			pr_warn("asdf: drm_mode_setcrtc [CONNECTOR:%d:%s]\n",
 					connector->base.id,
 					connector->name);
 
@@ -816,9 +817,9 @@ int drm_mode_setcrtc(struct drm_device *dev, void *data,
 	set.fb = fb;
 
 	if (drm_drv_uses_atomic_modeset(dev)) {
-		pr_warn("asdf drm_mode_setcrtc: { crtc->funcs->set_config()\n");
+		pr_warn("asdf: drm_mode_setcrtc: { crtc->funcs->set_config()\n");
 		ret = crtc->funcs->set_config(&set, &ctx);
-		pr_warn("asdf drm_mode_setcrtc: } crtc->funcs->set_config() = %d\n", ret);
+		pr_warn("asdf: drm_mode_setcrtc: } crtc->funcs->set_config() = %d\n", ret);
 	} else {
 		pr_warn("asdf: __drm_mode_set_config_internal()\n");
 		ret = __drm_mode_set_config_internal(&set, &ctx);
@@ -844,6 +845,7 @@ out:
 
 	DRM_MODESET_LOCK_ALL_END(dev, ctx, ret);
 
+	pr_warn("asdf: } drm_mode_setcrtc = %d\n", ret);
 	return ret;
 }
 
