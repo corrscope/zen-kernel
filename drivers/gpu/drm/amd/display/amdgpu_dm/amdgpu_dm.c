@@ -5991,7 +5991,8 @@ static void fill_stream_properties_from_drm_display_mode(
 		timing_out->hdmi_vic = hv_frame.vic;
 	}
 
-	if (is_freesync_video_mode(mode_in, aconnector)) {
+	bool freesync = is_freesync_video_mode(mode_in, aconnector);
+	if (freesync) {
 		timing_out->h_addressable = mode_in->hdisplay;
 		timing_out->h_total = mode_in->htotal;
 		timing_out->h_sync_width = mode_in->hsync_end - mode_in->hsync_start;
@@ -6011,13 +6012,14 @@ static void fill_stream_properties_from_drm_display_mode(
 		timing_out->v_front_porch = mode_in->crtc_vsync_start - mode_in->crtc_vdisplay;
 		timing_out->v_sync_width = mode_in->crtc_vsync_end - mode_in->crtc_vsync_start;
 		timing_out->pix_clk_100hz = mode_in->crtc_clock * 10;
-		pr_warn(
-			"asdf: fill_stream_properties_from_drm_display_mode() v_total=%d v_addressable=%d v_front_porch=%d v_sync_width=%d",
-			timing_out->v_total,
-			timing_out->v_addressable,
-			timing_out->v_front_porch,
-			timing_out->v_sync_width);
 	}
+	pr_warn(
+		"asdf: fill_stream_properties_from_drm_display_mode() freesync=%d v_total=%d v_addressable=%d v_front_porch=%d v_sync_width=%d",
+		freesync,
+		timing_out->v_total,
+		timing_out->v_addressable,
+		timing_out->v_front_porch,
+		timing_out->v_sync_width);
 
 	timing_out->aspect_ratio = get_aspect_ratio(mode_in);
 
