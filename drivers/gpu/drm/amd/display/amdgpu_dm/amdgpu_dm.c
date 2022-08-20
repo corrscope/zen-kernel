@@ -10339,6 +10339,7 @@ static int dm_update_crtc_state(struct amdgpu_display_manager *dm,
 							    &aconnector->base);
 
 		if (IS_ERR(drm_new_conn_state)) {
+			pr_warn("asdf: IS_ERR(drm_new_conn_state), presumably unreachable?\n");
 			ret = PTR_ERR_OR_ZERO(drm_new_conn_state);
 			goto fail;
 		}
@@ -10362,7 +10363,7 @@ static int dm_update_crtc_state(struct amdgpu_display_manager *dm,
 		 */
 
 		if (!new_stream) {
-			DRM_DEBUG_DRIVER("%s: Failed to create new stream for crtc %d\n",
+			pr_warn("asdf: %s: Failed to create new stream for crtc %d\n",
 					__func__, acrtc->base.base.id);
 			ret = -ENOMEM;
 			goto fail;
@@ -10399,7 +10400,7 @@ static int dm_update_crtc_state(struct amdgpu_display_manager *dm,
 		    dc_is_stream_unchanged(new_stream, dm_old_crtc_state->stream) &&
 		    dc_is_stream_scaling_unchanged(new_stream, dm_old_crtc_state->stream)) {
 			new_crtc_state->mode_changed = false;
-			DRM_DEBUG_DRIVER("Mode change not required, setting mode_changed to %d",
+			pr_warn("asdf: Mode change not required, setting mode_changed to %d",
 					 new_crtc_state->mode_changed);
 		}
 	}
@@ -10453,7 +10454,7 @@ static int dm_update_crtc_state(struct amdgpu_display_manager *dm,
 		if (ret)
 			goto fail;
 
-		DRM_DEBUG_DRIVER("Disabling DRM crtc: %d\n",
+		pr_warn("asdf: Disabling DRM crtc: %d\n",
 				crtc->base.id);
 
 		/* i.e. reset mode */
@@ -11191,11 +11192,13 @@ static int amdgpu_dm_atomic_check(struct drm_device *dev,
 
 	/* Enable all crtcs which require enable */
 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
+		pr_warn("asdf: { dm_update_crtc_state(true)\n");
 		ret = dm_update_crtc_state(&adev->dm, state, crtc,
 					   old_crtc_state,
 					   new_crtc_state,
 					   true,
 					   &lock_and_validation_needed);
+		pr_warn("asdf: } dm_update_crtc_state(true) = %d\n", ret);
 		if (ret) {
 			pr_warn("asdf: ENABLE: dm_update_crtc_state() failed\n");
 			goto fail;
