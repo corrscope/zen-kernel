@@ -6011,6 +6011,12 @@ static void fill_stream_properties_from_drm_display_mode(
 		timing_out->v_front_porch = mode_in->crtc_vsync_start - mode_in->crtc_vdisplay;
 		timing_out->v_sync_width = mode_in->crtc_vsync_end - mode_in->crtc_vsync_start;
 		timing_out->pix_clk_100hz = mode_in->crtc_clock * 10;
+		pr_warn(
+			"asdf: fill_stream_properties_from_drm_display_mode() v_total=%d v_addressable=%d v_front_porch=%d v_sync_width=%d",
+			timing_out->v_total,
+			timing_out->v_addressable,
+			timing_out->v_front_porch,
+			timing_out->v_sync_width);
 	}
 
 	timing_out->aspect_ratio = get_aspect_ratio(mode_in);
@@ -7132,7 +7138,7 @@ create_validate_stream_for_sink(struct amdgpu_dm_connector *aconnector,
 		dc_result = dc_validate_stream(adev->dm.dc, stream);
 
 		if (dc_result != DC_OK) {
-			DRM_DEBUG_KMS("Mode %dx%d (clk %d) failed DC validation with error %d (%s)\n",
+			pr_warn("asdf: Mode %dx%d (clk %d) failed DC validation with error %d (%s)\n",
 				      drm_mode->hdisplay,
 				      drm_mode->vdisplay,
 				      drm_mode->clock,
@@ -7147,7 +7153,7 @@ create_validate_stream_for_sink(struct amdgpu_dm_connector *aconnector,
 	} while (stream == NULL && requested_bpc >= 6);
 
 	if (dc_result == DC_FAIL_ENC_VALIDATE && !aconnector->force_yuv420_output) {
-		DRM_DEBUG_KMS("Retry forcing YCbCr420 encoding\n");
+		pr_warn("asdf: Retry forcing YCbCr420 encoding\n");
 
 		aconnector->force_yuv420_output = true;
 		stream = create_validate_stream_for_sink(aconnector, drm_mode,
