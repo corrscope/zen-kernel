@@ -11198,13 +11198,13 @@ static int amdgpu_dm_atomic_check(struct drm_device *dev,
 
 	/* Enable all crtcs which require enable */
 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
-		pr_warn("asdf: { dm_update_crtc_state(true)\n");
+		// pr_warn("asdf: { dm_update_crtc_state(true)\n");
 		ret = dm_update_crtc_state(&adev->dm, state, crtc,
 					   old_crtc_state,
 					   new_crtc_state,
 					   true,
 					   &lock_and_validation_needed);
-		pr_warn("asdf: } dm_update_crtc_state(true) = %d\n", ret);
+		// pr_warn("asdf: } dm_update_crtc_state(true) = %d\n", ret);
 		if (ret) {
 			pr_warn("asdf: ENABLE: dm_update_crtc_state() failed\n");
 			goto fail;
