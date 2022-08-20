@@ -1431,15 +1431,12 @@ int drm_atomic_commit(struct drm_atomic_state *state)
 	if (drm_debug_enabled(DRM_UT_STATE))
 		drm_atomic_print_new_state(state, &p);
 
-	pr_warn("asdf: { drm_atomic_check_only()\n");
 	ret = drm_atomic_check_only(state);
-	pr_warn("asdf: } drm_atomic_check_only() = %d\n", ret);
 	if (ret)
 		return ret;
 
 	drm_dbg_atomic(state->dev, "committing %p\n", state);
 
-	pr_warn("asdf: = config->funcs->atomic_commit()\n");
 	return config->funcs->atomic_commit(state->dev, state, false);
 }
 EXPORT_SYMBOL(drm_atomic_commit);
