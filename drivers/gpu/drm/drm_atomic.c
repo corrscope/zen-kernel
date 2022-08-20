@@ -1337,7 +1337,7 @@ int drm_atomic_check_only(struct drm_atomic_state *state)
 	for_each_oldnew_plane_in_state(state, plane, old_plane_state, new_plane_state, i) {
 		ret = drm_atomic_plane_check(old_plane_state, new_plane_state);
 		if (ret) {
-			drm_dbg_atomic(dev, "[PLANE:%d:%s] atomic core check failed\n",
+			pr_warn("asdf: [PLANE:%d:%s] atomic core check failed\n",
 				       plane->base.id, plane->name);
 			return ret;
 		}
@@ -1346,7 +1346,7 @@ int drm_atomic_check_only(struct drm_atomic_state *state)
 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
 		ret = drm_atomic_crtc_check(old_crtc_state, new_crtc_state);
 		if (ret) {
-			drm_dbg_atomic(dev, "[CRTC:%d:%s] atomic core check failed\n",
+			pr_warn("asdf: [CRTC:%d:%s] atomic core check failed\n",
 				       crtc->base.id, crtc->name);
 			return ret;
 		}
@@ -1355,7 +1355,7 @@ int drm_atomic_check_only(struct drm_atomic_state *state)
 	for_each_new_connector_in_state(state, conn, conn_state, i) {
 		ret = drm_atomic_connector_check(conn, conn_state);
 		if (ret) {
-			drm_dbg_atomic(dev, "[CONNECTOR:%d:%s] atomic core check failed\n",
+			pr_warn("asdf: [CONNECTOR:%d:%s] atomic core check failed\n",
 				       conn->base.id, conn->name);
 			return ret;
 		}
@@ -1365,7 +1365,7 @@ int drm_atomic_check_only(struct drm_atomic_state *state)
 		ret = config->funcs->atomic_check(state->dev, state);
 
 		if (ret) {
-			drm_dbg_atomic(dev, "atomic driver check for %p failed: %d\n",
+			pr_warn("asdf: atomic driver check for %p failed: %d\n",
 				       state, ret);
 			return ret;
 		}
@@ -1374,7 +1374,7 @@ int drm_atomic_check_only(struct drm_atomic_state *state)
 	if (!state->allow_modeset) {
 		for_each_new_crtc_in_state(state, crtc, new_crtc_state, i) {
 			if (drm_atomic_crtc_needs_modeset(new_crtc_state)) {
-				drm_dbg_atomic(dev, "[CRTC:%d:%s] requires full modeset\n",
+				pr_warn("asdf: [CRTC:%d:%s] requires full modeset\n",
 					       crtc->base.id, crtc->name);
 				return -EINVAL;
 			}
@@ -1431,12 +1431,15 @@ int drm_atomic_commit(struct drm_atomic_state *state)
 	if (drm_debug_enabled(DRM_UT_STATE))
 		drm_atomic_print_new_state(state, &p);
 
+	pr_warn("asdf: { drm_atomic_check_only()\n");
 	ret = drm_atomic_check_only(state);
+	pr_warn("asdf: } drm_atomic_check_only() = %d\n", ret);
 	if (ret)
 		return ret;
 
 	drm_dbg_atomic(state->dev, "committing %p\n", state);
 
+	pr_warn("asdf: = config->funcs->atomic_commit()\n");
 	return config->funcs->atomic_commit(state->dev, state, false);
 }
 EXPORT_SYMBOL(drm_atomic_commit);
