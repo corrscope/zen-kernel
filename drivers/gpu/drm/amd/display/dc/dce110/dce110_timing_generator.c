@@ -333,8 +333,8 @@ bool dce110_timing_generator_program_timing_generator(
 	if (patched_crtc_timing.flags.VSYNC_POSITIVE_POLARITY == 1)
 		bp_params.flags.VSYNC_POSITIVE_POLARITY = 1;
 
-	// if (patched_crtc_timing.flags.INTERLACE == 1)
-	// 	bp_params.flags.INTERLACE = 1;
+	if (patched_crtc_timing.flags.INTERLACE == 1)
+		bp_params.flags.INTERLACE = 1;
 
 	if (patched_crtc_timing.flags.HORZ_COUNT_BY_TWO == 1)
 		bp_params.flags.HORZ_COUNT_BY_TWO = 1;
