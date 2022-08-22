@@ -7480,6 +7480,10 @@ static int dm_encoder_helper_atomic_check(struct drm_encoder *encoder,
 	if (!crtc_state->connectors_changed && !crtc_state->mode_changed)
 		return 0;
 
+	pr_warn(
+		"asdf: dm_update_crtc_state: mode.vdisplay=%d, adjusted_mode.vdisplay=%d\n",
+		crtc_state->mode.vdisplay, crtc_state->adjusted_mode.vdisplay);
+
 	if (!state->duplicated) {
 		int max_bpc = conn_state->max_requested_bpc;
 		is_y420 = drm_mode_is_420_also(&connector->display_info, adjusted_mode) &&
@@ -10356,6 +10360,9 @@ static int dm_update_crtc_state(struct amdgpu_display_manager *dm,
 		if (!drm_atomic_crtc_needs_modeset(new_crtc_state))
 			goto skip_modeset;
 
+		pr_warn(
+			"asdf: dm_update_crtc_state: mode.vdisplay=%d, adjusted_mode.vdisplay=%d\n",
+			new_crtc_state->mode.vdisplay, new_crtc_state->adjusted_mode.vdisplay);
 		new_stream = create_validate_stream_for_sink(aconnector,
 							     &new_crtc_state->mode,
 							     dm_new_conn_state,
