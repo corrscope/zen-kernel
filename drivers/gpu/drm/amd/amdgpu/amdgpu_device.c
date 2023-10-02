@@ -4349,6 +4349,11 @@ int amdgpu_device_prepare(struct drm_device *dev)
 	if (dev->switch_power_state == DRM_SWITCH_POWER_OFF)
 		return 0;
 
+	/* Evict the majority of BOs before grabbing the full access */
+	r = amdgpu_device_evict_resources(adev);
+	if (r)
+		return r;
+
 	return 0;
 }
 
@@ -4369,13 +4374,6 @@ int amdgpu_device_suspend(struct drm_device *dev, bool fbcon)
 
 	if (dev->switch_power_state == DRM_SWITCH_POWER_OFF)
 		return 0;
-
-	adev->in_suspend = true;
-
-	/* Evict the majority of BOs before grabbing the full access */
-	r = amdgpu_device_evict_resources(adev);
-	if (r)
-		return r;
 
 	if (amdgpu_sriov_vf(adev)) {
 		amdgpu_virt_fini_data_exchange(adev);
