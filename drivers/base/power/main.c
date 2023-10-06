@@ -34,6 +34,7 @@
 #include <linux/cpufreq.h>
 #include <linux/devfreq.h>
 #include <linux/timer.h>
+#include <../kernel/power/power.h>
 
 #include "../base.h"
 #include "power.h"
@@ -1953,8 +1954,12 @@ int dpm_suspend_start(pm_message_t state)
 	if (error) {
 		suspend_stats.failed_prepare++;
 		dpm_save_failed_step(SUSPEND_PREPARE);
-	} else
+	} else {
+		bool io_allowed = !pm_gfp_mask_restricted();
+		if (io_allowed) pm_restrict_gfp_mask();
 		error = dpm_suspend(state);
+		if (io_allowed) pm_restore_gfp_mask();
+	}
 	dpm_show_time(starttime, state, error, "start");
 	return error;
 }

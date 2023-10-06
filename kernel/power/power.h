@@ -212,6 +212,7 @@ extern int pm_notifier_call_chain_robust(unsigned long val_up, unsigned long val
 extern int pm_notifier_call_chain(unsigned long val);
 void pm_restrict_gfp_mask(void);
 void pm_restore_gfp_mask(void);
+bool pm_gfp_mask_restricted(void);
 #else
 static inline void pm_restrict_gfp_mask(void) {}
 static inline void pm_restore_gfp_mask(void) {}

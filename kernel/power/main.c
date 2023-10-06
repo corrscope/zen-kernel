@@ -49,6 +49,12 @@ void pm_restrict_gfp_mask(void)
 	gfp_allowed_mask &= ~(__GFP_IO | __GFP_FS);
 }
 
+bool pm_gfp_mask_restricted(void)
+{
+	WARN_ON(!mutex_is_locked(&system_transition_mutex));
+	return saved_gfp_mask;
+}
+
 unsigned int lock_system_sleep(void)
 {
 	unsigned int flags = current->flags;
