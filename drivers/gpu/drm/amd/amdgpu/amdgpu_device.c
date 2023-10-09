@@ -1751,23 +1751,45 @@ static void amdgpu_switcheroo_set_state(struct pci_dev *pdev,
 		/* don't suspend or resume card normally */
 		dev->switch_power_state = DRM_SWITCH_POWER_CHANGING;
 
-		pci_set_power_state(pdev, PCI_D0);
-		amdgpu_device_load_pci_state(pdev);
+		r = pci_set_power_state(pdev, PCI_D0);
+		if (r) {
+			DRM_WARN("pci_set_power_state failed (%d)\n", r);
+			return;
+		}
+		if (!amdgpu_device_load_pci_state(pdev))
+			return;
 		r = pci_enable_device(pdev);
 		if (r)
 			DRM_WARN("pci_enable_device failed (%d)\n", r);
-		amdgpu_device_resume(dev, true);
+		r = amdgpu_device_resume(dev, true);
+		if (r) {
+			DRM_WARN("amdgpu_device_resume failed (%d)\n", r);
+			return;
+		}
 
 		dev->switch_power_state = DRM_SWITCH_POWER_ON;
 	} else {
 		pr_info("switched off\n");
 		dev->switch_power_state = DRM_SWITCH_POWER_CHANGING;
-		amdgpu_device_prepare(dev);
-		amdgpu_device_suspend(dev, true);
-		amdgpu_device_cache_pci_state(pdev);
+		r = amdgpu_device_prepare(dev);
+		if (r) {
+			DRM_WARN("amdgpu_device_prepare failed (%d)\n", r);
+			return;
+		}
+		r = amdgpu_device_suspend(dev, true);
+		if (r) {
+			DRM_WARN("amdgpu_device_suspend failed (%d)\n", r);
+			return;
+		}
+		if (!amdgpu_device_cache_pci_state(pdev))
+			return;
 		/* Shut down the device */
 		pci_disable_device(pdev);
-		pci_set_power_state(pdev, PCI_D3cold);
+		r = pci_set_power_state(pdev, PCI_D3cold);
+		if (r) {
+			DRM_WARN("pci_set_power_state failed (%d)\n", r);
+			return;
+		}
 		dev->switch_power_state = DRM_SWITCH_POWER_OFF;
 	}
 }
